@@ -8,8 +8,6 @@ output: html_document
 
 ## BACKORDER PREDICTION
 
-## GROUP MEMBERS - DHAVAL JARIWALA, DISHANT GUPTA, YESHA GOSALIYA
-
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
