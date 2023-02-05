@@ -26,16 +26,16 @@ Difference between Backlog and Backorder
 Because of their similarity, people frequently mix up the two terms. A backorder can also be referred to as a backlog.
 
 
-##How Do Backorders Operate?
+## How Do Backorders Operate?
 Let's think about two instances in order to comprehend how backordering functions. In one, the business has the necessary inventory, whereas in the other, the products are out of stock
 
-Situation 1: If the Good Is Currently in Stock
+*Situation 1: If the Good Is Currently in Stock
 Customers place orders.
 The corporation creates the sales order.
 It locates the specific item in its inventory and compares it to the sales order.
 The company delivers the order to the client
 
-Situation 2: Backordering Scenario
+*Situation 2: Backordering Scenario
 The scenario is that the product is out of stock when the consumer puts the order.
 The business starts the product's backorder. After that, it transforms it into a purchase order written to the supplier.
 The company notifies the supplier of the purchase order.
@@ -52,15 +52,12 @@ When you do not have enough product on hand, backordering enables you to keep yo
 ## When Will a Backorder Occur?
 A backorder is a particular circumstance involving a direct vendor or item. How long a backorder will take is not specified by law or business standards. While some businesses may just inform customers when their goods are available, others may publicly state when they anticipate their backorder will be addressed.
 
-# Data Understanding & Preparation 
+## Data Understanding & Preparation 
 Source of Data: The data comes from Kaggle’s dataset:  “Predict Product Backorders”.
 https://www.kaggle.com/competitions/untadta/data
 The dataset contains 1,048,576 rows (data points) and 23 columns (features). The target variable (or response) is the went_on_backorder variable. Each row represents an individual product and each column represents a feature such as:
 
-
-
-
-Data Preparation
+## Data Preparation
 
 There are 7 factor variables and 16 continuous variables present in the dataset.
 The Correlation matrix shows a positive linear correlation between most of the continuous variables. 
@@ -81,7 +78,7 @@ Predictive models
 
 
 
-Some EDA on primary data-set:
+<!-- Some EDA on primary data-set:
 1 -  Visualization of Sales V/s Forecasted Sales for X months
 
 
@@ -93,9 +90,9 @@ Some EDA on primary data-set:
 2-Forecasted Sales v/s Minimum recommended amount in stock of X Months
 
 
-3 – Gross Sales of Various product with lead time range
+3 – Gross Sales of Various product with lead time range. -->
 
-Data Cleaning
+## Data Cleaning
 Data Cleaning is the process to transform raw data into consistent data that can be easily analysed. It is aimed at filtering the content of statistical statements based on the data as well as their reliability. Moreover, it influences the statistical statements based on the data and improves your data quality and overall productivity.
 Check with respect to the outcome variable for mislabelled entries.
 Delete Rows and Columns containing all NA values.
@@ -112,7 +109,7 @@ A modest amount of oversampling can be applied to the minority class to improve 
 
 Before and after sampling the data to remove the imbalance
 
-3. Modelling  
+## Modelling  
 A machine learning model is a data file that has been trained to recognise specific patterns. You train a model on a set of data by providing it with an algorithm that it may use to reason about and learn from that data. A model's purpose is to produce a low-dimensional overview of a dataset. Models will be used to divide data into patterns and residuals. Strong patterns will obscure finer trends, so as we investigate a dataset, we'll utilise models to help peel back layers of structure. In the project we used various machine learning models to predict whether a particular product must be put on back order or not. We have used two models with various parameters for our dataset. The two models with their following parameters are explained below. 
 Logistic Regression
 Supervised learning is demonstrated using logistic regression. It is used in computing or forecasting the likelihood of a binary event i.e., a true or false event occurring. An example of logistic regression would be using machine learning to assess whether or not a product should be placed on backorder. Logistic Regression fits a single line to divide the space exactly into two.  As shown in the figure below.
@@ -128,7 +125,8 @@ A decision tree is a sequence of inquiries or tests that are repeated adaptively
 The project includes implementation of two decision tree models for the purpose of predicting backorders, that is whether a product should be ordered beforehand or not. This prediction is dependent on a number of parameters. The following independent variables are used for creating a decision tree model for the same.
 The First Model used all the Variables in the dataset except the variable SKU as it had multiple different values and no relationship with the dependent Variable.
 The Second model was built using 5 of the most important variables for decision tree algorithms which are as follows: lead time, 1st month sales, national inventory,  3rd month Sales and forecasted sales for 9th month.
-# Results & Evaluation 
+
+## Results & Evaluation 
 Logistic Regression can occasionally be limited by a single linear boundary. In this case, where the two classes are split by a definitely non-linear boundary, trees can better capture the separation, resulting in greater classification performance. When classes are not well-separated, however, trees are prone to overfitting the training data, hence Logistic Regression's basic linear boundary generalises better. In the project we have compared the results of various models using a confusion matrix which determines the performance of a classification problem.
 
 Variable importance of logistic regression model
