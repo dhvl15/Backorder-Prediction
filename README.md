@@ -52,7 +52,7 @@ When you do not have enough product on hand, backordering enables you to keep yo
 ## When Will a Backorder Occur?
 A backorder is a particular circumstance involving a direct vendor or item. How long a backorder will take is not specified by law or business standards. While some businesses may just inform customers when their goods are available, others may publicly state when they anticipate their backorder will be addressed.
 
-## Data Understanding & Preparation 
+## Dataset
 Source of Data: The data comes from Kaggle’s dataset:  “Predict Product Backorders”.
 https://www.kaggle.com/competitions/untadta/data
 The dataset contains 1,048,576 rows (data points) and 23 columns (features). The target variable (or response) is the went_on_backorder variable. Each row represents an individual product and each column represents a feature such as:
