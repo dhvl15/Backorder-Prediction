@@ -4,12 +4,6 @@ In supply chain systems, backorders can negatively impact effectiveness at servi
 
 ## What is backorder?
 A backorder is a purchase order for a good or service that cannot be fulfilled right away owing to a shortage of stock. Although the product might not be in the company's current inventory, it might still be in production, or the company might need to continue producing more of the item. Backorders are a sign that a company's product is in higher demand than it can meet. The company's backlog is another name for them.
-Backorder Key Features: 
-A backorder is a purchase order for a good or service that cannot be fulfilled right away owing to a shortage of stock.
-Backorders provide information about an organisation's inventory control. A small backorder with quick turnaround is advantageous, but a big backorder with protracted wait times can cause issues.
-Demand is typically high for businesses with reasonable backorders, but those who can't keep up risk losing clients.
-Backorders, on the other hand, enable a business to have lower levels of inventory, have a lesser risk of obsolescence and theft, and may lead to organic promotion for its in high demand goods.
-Backorders may occur for popular items that are in great demand (such as new models of cell phones or gaming consoles).
 
 <!--1.2 Backorder Graphical Visualisation:-->
 
@@ -22,36 +16,6 @@ Backorders occur for a variety of reasons — some of which are preventable and 
 * Inventory and warehouse management discrepancies
 * Long lead time 
 
-Difference between Backlog and Backorder
-Because of their similarity, people frequently mix up the two terms. A backorder can also be referred to as a backlog.
-
-
-## How Do Backorders Operate?
-Let's think about two instances in order to comprehend how backordering functions. In one, the business has the necessary inventory, whereas in the other, the products are out of stock
-
-*Situation 1: If the Good Is Currently in Stock
-Customers place orders.
-The corporation creates the sales order.
-It locates the specific item in its inventory and compares it to the sales order.
-The company delivers the order to the client
-
-*Situation 2: Backordering Scenario
-The scenario is that the product is out of stock when the consumer puts the order.
-The business starts the product's backorder. After that, it transforms it into a purchase order written to the supplier.
-The company notifies the supplier of the purchase order.
-The supplier completes the order after receiving the purchase order.
-The business ships the order to the consumer after receiving it.
-
-We can see from the examples that the backordering for one out-of-stock goods works nicely. But you can't use it as your only inventory approach. You must be able to match each purchase order with the appropriate sales order before starting the product delivery procedure. A strategy for managing your inventory that correlates to your sales and purchase orders is beneficial. This makes it easier for you to coordinate the management of both incoming and exiting sales.
-When you do not have enough product on hand, backordering enables you to keep your consumers and ensure that your sales increase. Additionally, the organisation can benefit significantly by cutting costs, increasing the worth of your product, and minimising waste. You may also offer customised orders thanks to it. If you have a strong system in place to manage your inventory and provide excellent customer service, backordering can be a successful strategy for you.
-
-
-
-
-
-## When Will a Backorder Occur?
-A backorder is a particular circumstance involving a direct vendor or item. How long a backorder will take is not specified by law or business standards. While some businesses may just inform customers when their goods are available, others may publicly state when they anticipate their backorder will be addressed.
-
 ## Dataset
 Source of Data: The data comes from Kaggle’s dataset:  “Predict Product Backorders”.
 https://www.kaggle.com/competitions/untadta/data
@@ -63,14 +27,6 @@ There are 7 factor variables and 16 continuous variables present in the dataset.
 The Correlation matrix shows a positive linear correlation between most of the continuous variables. 
 It is observed that sales, forecast, min_bank, national_inv and lead_time have a strong positive correlation and can be used for prediction.
 
-Exploratory Data Analysis
-Exploratory data analysis (EDA) is used to analyse and investigate data sets and summarise their main characteristics, often employing data visualisation methods. Tools we can use for EDA - 
-Clustering and dimension reduction techniques.
-Univariate visualisation 
-Bivariate visualisations 
-Multivariate visualisations
-K-means Clustering 
-Predictive models
 
 
 
@@ -110,7 +66,6 @@ A modest amount of oversampling can be applied to the minority class to improve 
 Before and after sampling the data to remove the imbalance
 
 ## Modelling  
-A machine learning model is a data file that has been trained to recognise specific patterns. You train a model on a set of data by providing it with an algorithm that it may use to reason about and learn from that data. A model's purpose is to produce a low-dimensional overview of a dataset. Models will be used to divide data into patterns and residuals. Strong patterns will obscure finer trends, so as we investigate a dataset, we'll utilise models to help peel back layers of structure. In the project we used various machine learning models to predict whether a particular product must be put on back order or not. We have used two models with various parameters for our dataset. The two models with their following parameters are explained below. 
 Logistic Regression
 Supervised learning is demonstrated using logistic regression. It is used in computing or forecasting the likelihood of a binary event i.e., a true or false event occurring. An example of logistic regression would be using machine learning to assess whether or not a product should be placed on backorder. Logistic Regression fits a single line to divide the space exactly into two.  As shown in the figure below.
  
@@ -118,8 +73,8 @@ After cleaning and transformation of the dataset, and sampling it according to t
 For the 1st model we used the following parameters lead_time ,sales_1_month,  national_inv  , sales_3_month , forecast_9_month.
 For the 2nd model we  created a 2 parameter model with the following parameters lead_time , national_inv.
 Using the Exploratory Data Analysis we had found out the direct relations of these variables to the dependent variable (went on backorder),we also estimated the influence of one or more covariates while controlling for any confounding variables. The variables national inventory and lead times were discovered to be the most important determinants in determining whether a product should be placed on backorder. 
+
 Decision Tree Model 
-A decision tree is a method for making decisions that uses a tree-like model of options and their potential consequences, such as chance event outcomes, resource costs, and utility. It's one way to demonstrate an algorithm using just conditional control statements. Decision trees are a prominent machine learning approach that is frequently used in operations research, particularly in decision analysis, to assist in discovering the strategy that is most likely to achieve a goal.
 A decision tree is a sequence of inquiries or tests that are repeated adaptively, such that the outcomes of previous tests may influence the next test. Decision Trees divide the area into increasingly smaller regions.
 
 The project includes implementation of two decision tree models for the purpose of predicting backorders, that is whether a product should be ordered beforehand or not. This prediction is dependent on a number of parameters. The following independent variables are used for creating a decision tree model for the same.
