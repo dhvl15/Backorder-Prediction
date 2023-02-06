@@ -1,0 +1,336 @@
+---
+title: "IE5374Project"
+author: "Dhaval Jariwala"
+date: "2022-12-06"
+output: html_document
+---
+## IE5374 PROJECT
+
+## BACKORDER PREDICTION
+
+## GROUP MEMBERS - DHAVAL JARIWALA, DISHANT GUPTA, YESHA GOSALIYA
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+library(ROSE)
+library(ROCR)
+library(caret)
+library(MASS)
+library(gridExtra)
+
+trainData <- read.csv("BackOrder_train.csv", stringsAsFactors = T)[,-1]
+testData <- read.csv("BackOrder_test.csv", stringsAsFactors = T)[,-1]
+data <- rbind(trainData,testData)
+```
+
+## CHECK THE DATASETS
+```{r}
+#TRAINING DATA
+
+head(trainData)
+
+# Check dimensions of the dataset
+dim(trainData)
+
+# check the datatype of each column
+sapply(trainData,class)
+
+# summary of all columns in the dataset
+summary(trainData)
+```
+
+```{r}
+# TESTING DATA
+
+head(testData)
+
+# Check dimensions of the dataset
+dim(testData)
+
+# check the datatype of each column
+sapply(testData,class)
+
+# summary of all columns in the dataset
+summary(testData)
+
+```
+
+## EDA
+```{r}
+ggplot(data = trainData, aes(x = sales_3_month, y = forecast_3_month)) + geom_point(aes(color = factor(went_on_backorder))) 
+
+ggplot(data = trainData+ aes(x = sales_6_month, y = forecast_6_month)) + geom_point(aes(color = factor(went_on_backorder))) 
+
+ggplot(data = trainData ,aes(x = sales_9_month, y = forecast_9_month)) + geom_point(aes(color = factor(went_on_backorder))) 
+
+ggplot(data = trainData, aes(x = min_bank, y = forecast_3_month)) + geom_point(aes(color = factor(went_on_backorder)))
+
+ggplot(data = trainData, aes(x = min_bank, y = forecast_6_month)) + geom_point(aes(color = factor(went_on_backorder))) 
+
+ggplot(data = trainData, aes(x = min_bank, y = forecast_9_month)) + geom_point(aes(color = factor(went_on_backorder)))
+
+ggplot(data=PrductsData, aes(x=went_on_backorder, y=national_inv, colour = lead_time, size = in_transit_qty)) + 
+    geom_point() + 
+    xlab("went_on_backorder")+ylab("national_inv") + 
+    ggtitle("went_on_backorder Vs. national_inv")
+
+
+```
+
+
+
+## DATA CLEANING
+```{r}
+# TRAINING DATA
+
+#checking the outcome variable for mislabled entries
+rawTrainData = trainData
+p1 = ggplot(rawTrainData, aes(went_on_backorder)) + geom_bar() + ggtitle("Before Cleaning")
+
+# from the summary it is evident that there is one row which is incorrectly entered in the dataset, it has either missing or null values
+trainData <- trainData %>% filter(went_on_backorder != "")
+
+# remove the rows with all NA
+trainData <- trainData[apply(trainData, 1, function(y) !all(is.na(y))),]
+
+# remove the Cols with all NA
+trainData <- trainData[sapply(trainData, function(x) !all(is.na(x)))]
+  
+# drop unused levels induced by null row
+trainData <- droplevels(trainData)
+
+dim(trainData)
+
+summary(trainData)
+
+p2 = ggplot(trainData, aes(went_on_backorder)) + geom_bar() + ggtitle("After Cleaning")
+grid.arrange(p1, p2, ncol = 2)  
+
+# rows and cols with all NA values and un-used levels are removed from the data set
+```
+
+```{r}
+# TESTING DATA
+
+#checking the outcome variable for mislabled entries
+rawTestData = testData
+p1 = ggplot(rawTestData, aes(went_on_backorder)) + geom_bar() + ggtitle("Before Cleaning")
+
+# from the summary it is evident that there is one row which is incorrectly entered in the dataset, it has either missing or null values
+testData <- testData %>% filter(went_on_backorder != "")
+
+# remove the rows with all NA
+testData <- testData[apply(testData, 1, function(y) !all(is.na(y))),]
+
+# remove the Cols with all NA
+testData <- testData[sapply(testData, function(x) !all(is.na(x)))]
+  
+# drop unused levels induced by null row
+testData <- droplevels(testData)
+
+dim(testData)
+
+summary(testData)
+
+p2 = ggplot(testData, aes(went_on_backorder)) + geom_bar() + ggtitle("After Cleaning")
+
+grid.arrange(p1,p2, ncol = 2)
+
+# rows and cols with all NA values and unsed levels are removed from the data set
+
+```
+## Outlier Detection
+
+```{r}
+## TRAINING DATA
+continuousVariables <- select_if(trainData,is.numeric)
+#continuousVariables <- as.data.frame(colnames(continuousVariables)) 
+#colnames(continuousVariables) <- c("names")
+continuousVariables <- colnames(continuousVariables)
+continuousVariables
+
+library(robustHD)
+
+z = trainData
+z[,continuousVariables] <- sapply(z[,continuousVariables], function(x) winsorize(x, threshold =1.5, method = "zscore", robust = TRUE))
+
+#par(mfrow=c(1,2))
+p1 = boxplot(trainData[,continuousVariables],  xaxt = "n")
+tick <- seq_along(p1$names)
+axis(1, at = tick, labels = FALSE)
+text(tick, par("usr")[3] - 0.45, p1$names, srt = 45, xpd = TRUE)
+
+p2 = boxplot(z[,continuousVariables], xaxt = "n")
+tick <- seq_along(p2$names)
+axis(1, at = tick, labels = FALSE)
+text(tick, par("usr")[3] - 0.45, p2$names, srt = 45, xpd = TRUE)
+
+c = cor(trainData[,continuousVariables])
+
+library('corrplot')
+corrplot(c, method="color")
+
+```
+
+
+## Data Imputation (solve missing values problem)
+```{r}
+# TRAINING DATA
+
+a<-sapply(trainData,function(x)sum(is.na(x)))
+
+data.frame(a,variable=colnames(trainData))%>%
+  ggplot(aes(reorder(variable,-a),a))+
+    geom_bar(stat="identity")+
+    labs(x="variable")+
+    theme(axis.text.x = element_text(angle=90))
+
+# it is seen that the column "lead_time" has a lot of missing values
+# therefore we replace it with mean value of the column lead_time
+
+trainData$lead_time[is.na(trainData$lead_time)] = mean(trainData$lead_time, na.rm=TRUE)
+
+summary(trainData)
+```
+
+```{r}
+# TESTING DATA
+
+b<-sapply(testData,function(x)sum(is.na(x)))
+
+data.frame(a,variable=colnames(testData))%>%
+  ggplot(aes(reorder(variable,-b),b))+
+    geom_bar(stat="identity")+
+    labs(x="variable")+
+    theme(axis.text.x = element_text(angle=90))
+
+# it is seen that the column "lead_time" has a lot of missing values
+# therefore we replace it with mean value of the column lead_time
+
+testData$lead_time[is.na(testData$lead_time)] = mean(testData$lead_time, na.rm=TRUE)
+
+summary(testData)
+
+```
+
+## CONVERTING ALL CHARCHTER VALUES TO NUMERIC
+```{r}
+#function to map yes and no values to 1 and 0
+Mapvalue <- function(x) {
+  plyr::mapvalues(x, from = c("Yes", "No"), to = c(1,0))
+}
+
+# TRAINING DATA
+categoricalData1<-select_if(trainData,is.factor)
+categoricalData1[c(1:ncol(categoricalData1))] <- lapply(categoricalData1[c(1:ncol(categoricalData1))], Mapvalue)
+NumericData1<-select_if(trainData,is.numeric)
+trainData <- cbind(NumericData1, categoricalData1)
+head(trainData)
+
+# TESTING DATA
+categoricalData2<-select_if(testData,is.factor)
+categoricalData2[c(1:ncol(categoricalData2))] <- lapply(categoricalData2[c(1:ncol(categoricalData2))], Mapvalue)
+NumericData2<-select_if(testData,is.numeric)
+testData <- cbind(NumericData2, categoricalData2)
+head(testData)
+
+
+```
+
+
+
+
+
+## SAMPLING
+```{r}
+# It is clearly seen that the outcome variable 'went_on_backorder' is biased, therefore it is necessary to oversample the data so as to get a better accuracy and fit on the model
+
+sampledTrainData <- ovun.sample(went_on_backorder~., data = trainData, method = "both")$data
+table(trainData$went_on_backorder)
+table(sampledTrainData$went_on_backorder)
+
+grid.arrange(
+  ggplot(trainData, aes(went_on_backorder)) + geom_bar() , 
+  ggplot(sampledTrainData, aes(went_on_backorder)) + geom_bar(), 
+  ncol = 2) 
+
+ 
+```
+## MODELING
+
+```{r}
+# LOGISTIC REGRESSION
+fit.glm1 <- caret::train(went_on_backorder~ lead_time +sales_1_month+ national_inv  + sales_3_month + forecast_9_month , data=trainData, method="glm",family= binomial)
+varImp(fit.glm1)
+fit.glm1$results
+
+```
+
+```{r}
+fit.glm2 <- caret::train(went_on_backorder~ lead_time + national_inv , data=underSampledTrainData, method="glm",family= binomial)
+varImp(fit.glm2)
+fit.glm2$results
+```
+
+```{r}
+# DECISION TREE
+fit.dt1 <- caret::train(went_on_backorder~., data=underSampledTrainData, method="rpart")
+varImp(fit.dt1)
+fit.dt1$results
+```
+
+```{r}
+fit.dt2 <- caret::train(went_on_backorder~ lead_time +sales_9_month+ national_inv  + sales_6_month + forecast_3_month , data=underSampledTrainData, method="rpart")
+varImp(fit.dt2)
+fit.dt2$results
+```
+
+## RESULTS
+
+```{r}
+results <- resamples(list(GLM=fit.glm1,CART=fit.dt2))
+summary(results)
+```
+
+```{r}
+summary(fit.glm1)
+```
+
+```{r}
+caret::confusionMatrix(underSampledTrainData$went_on_backorder,predict(fit.glm1),positive = "1")
+```
+
+## Prediction
+```{r}
+test.glm <- predict(fit.glm1, newdata = testData)
+Conflog<-confusionMatrix(data = test.glm , reference =testData$went_on_backorder ,positive = "1")
+Conflog
+```
+
+```{r}
+caret::confusionMatrix(underSampledTrainData$went_on_backorder,predict(fit.dt1),positive = "1")
+```
+
+```{r}
+test.DT <- predict(fit.dt1, newdata = testData)
+#-- Confusion matrix of test data for Decision tree
+Confdt<-confusionMatrix(data = test.DT , reference =testData$went_on_backorder ,positive = "1")
+Confdt
+```
+## Result of Predicted Model
+```{r}
+Results1<-cbind(Conflog$byClass,Confdt$byClass)
+Results1
+```
+
+
+
+
+
+
+
